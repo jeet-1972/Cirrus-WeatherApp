@@ -175,7 +175,7 @@ function App() {
         <div className="panel empty-state">
           <p className="empty-state__text">
             {errorType === ErrorType.INVALID_KEY
-              ? 'Configure a valid API key in .env (VITE_WEATHERSTACK_ACCESS_KEY).'
+              ? 'Add VITE_WEATHERSTACK_ACCESS_KEY in Vercel → Settings → Environment Variables, then redeploy. For local dev, add it to .env.'
               : errorType === ErrorType.NETWORK
                 ? 'Check your connection and try again.'
                 : 'Enter a location above to see weather. If you see a rate limit message, wait a while before searching again.'}

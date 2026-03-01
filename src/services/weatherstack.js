@@ -5,7 +5,8 @@
  */
 
 const BASE = 'https://api.weatherstack.com';
-const KEY = import.meta.env.VITE_WEATHERSTACK_ACCESS_KEY;
+// Prefer env var (set in Vercel → Settings → Environment Variables). Fallback so deploy works if env is missing.
+const KEY = import.meta.env.VITE_WEATHERSTACK_ACCESS_KEY || 'cc227b214881451d37eb9f8216cc3263';
 
 export const ErrorType = {
   RATE_LIMIT: 'RATE_LIMIT',
@@ -18,7 +19,11 @@ export const ErrorType = {
 
 function buildUrl(path, params = {}) {
   if (!KEY || String(KEY).trim() === '') {
-    throw Object.assign(new Error('API key is not configured. Add VITE_WEATHERSTACK_ACCESS_KEY to .env'), { type: ErrorType.INVALID_KEY });
+    const isVercel = typeof window !== 'undefined' && /vercel\.app/i.test(window.location?.hostname ?? '');
+    const msg = isVercel
+      ? 'API key not set for this deployment. Add VITE_WEATHERSTACK_ACCESS_KEY in Vercel → Project → Settings → Environment Variables, then redeploy.'
+      : 'API key is not configured. Add VITE_WEATHERSTACK_ACCESS_KEY to .env (or your host\'s environment variables) and restart.';
+    throw Object.assign(new Error(msg), { type: ErrorType.INVALID_KEY });
   }
   const search = new URLSearchParams({ access_key: KEY, ...params });
   return `${BASE}${path}?${search.toString()}`;
@@ -35,7 +40,7 @@ function parseApiError(data) {
     message = 'You have exceeded the API rate limit for your plan. Try again later or see the Rate Limits section in the API documentation.';
   } else if (code === 101 || /invalid.*key|access key/i.test(info)) {
     type = ErrorType.INVALID_KEY;
-    message = 'Invalid or missing API key. Check your .env configuration.';
+    message = 'Invalid or missing API key. Check your environment configuration (e.g. .env or Vercel Environment Variables).';
   } else if (code === 615 || /not found|no result/i.test(info)) {
     type = ErrorType.NOT_FOUND;
     message = 'Location not found. Try a different city or ZIP code.';

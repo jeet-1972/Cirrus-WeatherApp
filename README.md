@@ -1,6 +1,6 @@
-# Weather App
+# Cirrus
 
-React app that displays real-time and historical weather using the [Weatherstack API](https://weatherstack.com/). Built with Vite.
+Weather app that displays real-time and historical data using the [Weatherstack API](https://weatherstack.com/). Built with Vite + React.
 
 ## Features
 
@@ -31,6 +31,12 @@ React app that displays real-time and historical weather using the [Weatherstack
    ```bash
    npm run build
    ```
+
+## Deploy to Vercel
+
+The app needs `VITE_WEATHERSTACK_ACCESS_KEY` at **build time**. On Vercel you must set it in the project’s environment, not in a local `.env` file.
+
+The app includes a fallback key so it works on Vercel without env setup. For production, add VITE_WEATHERSTACK_ACCESS_KEY in Vercel (Settings → Environment Variables) and redeploy.
 
 ## API
 
